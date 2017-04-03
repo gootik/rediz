@@ -1,0 +1,10 @@
+_build/
+
+*.o
+*.beam
+*.plt
+erl_crash.dump
+
+.rebar
+*.iml
+.idea/

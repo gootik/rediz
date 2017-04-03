@@ -1,0 +1,17 @@
+{application, rediz,
+ [{description, "An Erlang Redis client based on Shackle Library."},
+  {vsn, "0.0.1"},
+  {registered, []},
+  {mod, {rediz_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    shackle
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, ["Sasan Hezarkhani"]},
+  {licenses, ["MIT"]},
+  {links, []}
+ ]}.
