@@ -1,3 +1,8 @@
+%%%-------------------------------------------------------------------
+%%% @doc rediz_protocol is used to encode/decode messages to and from
+%%%      a Redis server
+%%% @end
+%%%-------------------------------------------------------------------
 -module(rediz_protocol).
 
 -include("rediz.hrl").

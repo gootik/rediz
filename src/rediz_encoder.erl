@@ -1,3 +1,11 @@
+%%%-------------------------------------------------------------------
+%%% @doc rediz_encoder will encode a client message to a RESP command
+%%%      to be sent to the server.
+%%%
+%%%      Please look at https://redis.io/topics/protocol for specifics
+%%%      on the protocol.
+%%% @end
+%%%-------------------------------------------------------------------
 -module(rediz_encoder).
 
 -export([

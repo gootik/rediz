@@ -14,6 +14,8 @@ and [Shackle](https://github.com/lpgauth/shackle).
 * Faster decoding
 * Multi/Exec commands
 * Tests
+* Redis AUTH on connection
+* Run SELECT DB command on connection
 
 ## Why
 To get familiar with Shackle by doing a simple/small project.

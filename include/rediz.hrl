@@ -1,3 +1,4 @@
+%% Redis Protocol
 -define(RESP_TYPE_STRING, "+").
 -define(RESP_TYPE_ERROR, "-").
 -define(RESP_TYPE_INTEGER, ":").
@@ -9,6 +10,7 @@
 
 -define(RESP_NULL, "-1").
 
+%% External Types
 -type rediz_reply() :: {ok, reply()} | {error, binary()}.
 -type reply() :: reply_types() | [reply_types()].
 -type reply_types() :: integer() | binary() | undefined.

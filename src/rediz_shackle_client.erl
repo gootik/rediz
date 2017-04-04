@@ -1,3 +1,10 @@
+%%%-------------------------------------------------------------------
+%%% @doc rediz_shackle_client is used to manage connections and
+%%%      transfer messages from the client to the server. It is also
+%%%      responsible for setting up authentication and selecting the
+%%%      default database on connection.
+%%% @end
+%%%-------------------------------------------------------------------
 -module(rediz_shackle_client).
 
 -behavior(shackle_client).

@@ -1,3 +1,11 @@
+%%%-------------------------------------------------------------------
+%%% @doc rediz_decoder will decode a RESP (REdis Serialization Protocol)
+%%%      binary sent from a server.
+%%%
+%%%      Please look at https://redis.io/topics/protocol for specifics
+%%%      on the protocol.
+%%% @end
+%%%-------------------------------------------------------------------
 -module(rediz_decoder).
 
 -include("rediz.hrl").
