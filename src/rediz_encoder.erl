@@ -8,12 +8,15 @@
 %%%-------------------------------------------------------------------
 -module(rediz_encoder).
 
+-include("rediz.hrl").
+
 -export([
     resp_encode/1
 ]).
 
 -compile(inline).
 
+-spec resp_encode(rediz_command()) -> binary().
 %% Key Commands
 resp_encode({set, Key, Value}) ->
     <<"SET ", Key/binary, " ", Value/binary>>;

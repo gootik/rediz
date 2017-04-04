@@ -15,6 +15,9 @@
 -type reply() :: reply_types() | [reply_types()].
 -type reply_types() :: integer() | binary() | undefined.
 
+-type rediz_command() :: tuple().
+
 -export_type([
-    rediz_reply/0
+    rediz_reply/0,
+    rediz_command/0
 ]).

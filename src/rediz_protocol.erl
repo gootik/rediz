@@ -16,11 +16,13 @@
     decode/1
 ]).
 
+-spec encode(rediz_command()) -> binary().
 encode(Req) ->
     Command = rediz_encoder:resp_encode(Req),
 
     <<Command/binary, ?RESP_DELIM>>.
 
+-spec decode(binary()) -> {rediz_reply(), binary()} | {buffer, binary()}.
 decode(Data) ->
     case binary:last(Data) of
         ?RESP_LF_INT ->
