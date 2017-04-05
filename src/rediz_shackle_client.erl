@@ -45,7 +45,7 @@ handle_data(Data, #state{requests_in = Requests, buffer = Buffer} = State) ->
         buffer ->
             {ok, [], State#state{buffer = Rest}};
         _ ->
-            {ok, [{Requests, Decoded}], State#state{buffer      = <<>>,
+            {ok, [{Requests, Decoded}], State#state{buffer      = Rest,
                                                     requests_in = Requests + 1}}
     end.
 
