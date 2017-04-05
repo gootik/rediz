@@ -72,8 +72,8 @@ hlen(Key) ->
 hmget(Key, Fields) ->
     call_rediz({hmget, Key, Fields}).
 
--spec hmset(binary(), #{binary() => binary()}) -> rediz_reply().
-hmset(Key, FieldValues) when is_map(FieldValues) ->
+-spec hmset(binary(), [{binary(), binary()}]) -> rediz_reply().
+hmset(Key, FieldValues) when is_list(FieldValues) ->
     call_rediz({hmset, Key, FieldValues}).
 
 -spec hget(binary(), binary()) -> rediz_reply().
@@ -92,9 +92,11 @@ hsetnx(Key, Field, Value) ->
 hstrlen(Key, Field) ->
     call_rediz({hstrlen, Key, Field}).
 
--spec hgetall(binary()) -> rediz_reply().
+-spec hgetall(binary()) -> {ok, [tuple()]}.
 hgetall(Key) ->
-    call_rediz({hgetall, Key}).
+    {ok, ValList} = call_rediz({hgetall, Key}),
+
+    {ok, redis_array_to_proplist(ValList)}.
 
 -spec hvals(binary()) -> rediz_reply().
 hvals(Key) ->
@@ -125,3 +127,8 @@ query(Query) when is_binary(Query) ->
 
 call_rediz(Query) ->
     shackle:call(rediz, Query).
+
+redis_array_to_proplist([]) ->
+    [];
+redis_array_to_proplist([V, K | Rest]) ->
+    [{K, V} | redis_array_to_proplist(Rest)].

@@ -26,17 +26,38 @@ resp_encode({keys, Pattern}) ->
     <<"KEYS ", Pattern/binary>>;
 
 %% Hash Commands
-resp_encode({hkeys, Key}) ->
-    <<"HKEYS ", Key/binary>>;
+resp_encode({hlen, Key}) ->
+    <<"HLEN ", Key/binary>>;
+resp_encode({hdel, Key, Field}) ->
+    <<"HDEL ", Key/binary, " ", Field/binary>>;
+resp_encode({hexists, Key, Field}) ->
+    <<"HEXISTS ", Key/binary, " ", Field/binary>>;
+
 resp_encode({hget, Key, Field}) ->
     <<"HGET ", Key/binary, " ", Field/binary>>;
-resp_encode({hset, Key, Field, Value}) ->
-    <<"HSET ", Key/binary, " ", Field/binary, " ", Value/binary>>;
-resp_encode({hmget, Key, Fields}) ->
-    FieldsBinary = argument_list(Fields),
-    <<"HMGET ", Key/binary, " ", FieldsBinary/binary>>;
 resp_encode({hgetall, Key}) ->
     <<"HGETALL ", Key/binary>>;
+resp_encode({hincrby, Key, Field, Value}) ->
+    BinaryVal = integer_to_binary(Value),
+    <<"HINCRBY ", Key/binary, " ", Field/binary, " ", BinaryVal/binary>>;
+resp_encode({hincrbyfloat, Key, Field, Value}) ->
+    BinaryVal = float_to_binary(Value),
+    <<"HINCRBYFLOAT ", Key/binary, " ", Field/binary, " ", BinaryVal/binary>>;
+
+resp_encode({hset, Key, Field, Value}) ->
+    <<"HSET ", Key/binary, " ", Field/binary, " ", Value/binary>>;
+resp_encode({hsetnx, Key, Field, Value}) ->
+    <<"HSETNX ", Key/binary, " ", Field/binary, " ", Value/binary>>;
+resp_encode({hmset, Key, Field, ValueProplist}) ->
+    ValuesBinary = argument_list(ValueProplist),
+    <<"HMSET ", Key/binary, " ", Field/binary, " ", ValuesBinary/binary>>;
+
+resp_encode({hkeys, Key}) ->
+    <<"HKEYS ", Key/binary>>;
+resp_encode({hvals, Key}) ->
+    <<"HVALS ", Key/binary>>;
+resp_encode({hstrlen, Key, Field}) ->
+    <<"HSTRLEN ", Key/binary, " ", Field/binary>>;
 
 %% HyperLogLog Commands
 resp_encode({pfadd, Key, Values}) ->
@@ -45,6 +66,9 @@ resp_encode({pfadd, Key, Values}) ->
 resp_encode({pfcount, Keys}) ->
     KeysBinary = argument_list(Keys),
     <<"PFCOUNT ", KeysBinary/binary>>;
+resp_encode({pfmerge, DestKey, SourceKeys}) ->
+    SourceKeysBinary = argument_list(SourceKeys),
+    <<"PFMERGE ", DestKey/binary, SourceKeysBinary/binary>>;
 
 resp_encode({raw_query, Query}) ->
     Query.
@@ -54,6 +78,9 @@ resp_encode({raw_query, Query}) ->
 %%--------------------------------------------
 argument_list(List) when is_list(List) ->
     lists:foldl(
-        fun(Item, Acc) ->
-            <<Acc/binary, " ", Item/binary>>
+        fun
+            ({Key, Val}, Acc) ->
+                <<Acc/binary, " ", Key/binary, " ", Val/binary>>;
+            (Item, Acc) ->
+                <<Acc/binary, " ", Item/binary>>
         end, <<>>, List).
