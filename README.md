@@ -22,26 +22,27 @@ To get familiar with Shackle by doing a simple/small project.
 ## Example
 ```
 1> rediz:start().
-{ok,[granderl,shackle,rediz]}
+{ok, [granderl, shackle, rediz]}
 
 2> rediz:hset(<<"rediz:hash">>, <<"field">>, <<"val">>).
-{ok,1}
+{ok, 1}
 
 3> rediz:hset(<<"rediz:hash">>, <<"field2">>, <<"val2">>).
-{ok,1}
+{ok, 1}
 
 4> rediz:hkeys(<<"redis:hash">>).
-{ok,[]}
+{ok, []}
 
 5> rediz:hkeys(<<"rediz:hash">>).
-{ok,[<<"field2">>,<<"field">>]}
+{ok, [<<"field2">>, <<"field">>]}
 
 6> rediz:hget(<<"rediz:hash">>, <<"field2">>).
-{ok,<<"val2">>}
+{ok, <<"val2">>}
 
 7> rediz:hgetall(<<"rediz:hash">>).
-{ok,[<<"val2">>,<<"field2">>,<<"val">>,<<"field">>]}
+{ok,[{<<"val2">>, <<"field2">>},
+     {<<"val">>, <<"field">>}]}
 
 8> rediz:keys(<<"rediz:*">>).
-{ok,[<<"rediz:hash">>]}
+{ok, [<<"rediz:hash">>]}
 ```
