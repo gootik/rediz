@@ -28,8 +28,9 @@ resp_encode({keys, Pattern}) ->
 %% Hash Commands
 resp_encode({hlen, Key}) ->
     <<"HLEN ", Key/binary>>;
-resp_encode({hdel, Key, Field}) ->
-    <<"HDEL ", Key/binary, " ", Field/binary>>;
+resp_encode({hdel, Key, Fields}) ->
+    ValuesBinary = argument_list(Fields),
+    <<"HDEL ", Key/binary, " ", ValuesBinary/binary>>;
 resp_encode({hexists, Key, Field}) ->
     <<"HEXISTS ", Key/binary, " ", Field/binary>>;
 
@@ -37,6 +38,9 @@ resp_encode({hget, Key, Field}) ->
     <<"HGET ", Key/binary, " ", Field/binary>>;
 resp_encode({hgetall, Key}) ->
     <<"HGETALL ", Key/binary>>;
+resp_encode({hmget, Key, Fields}) ->
+    ValuesBinary = argument_list(Fields),
+    <<"HMGET ", Key/binary, " ", ValuesBinary/binary>>;
 resp_encode({hincrby, Key, Field, Value}) ->
     BinaryVal = integer_to_binary(Value),
     <<"HINCRBY ", Key/binary, " ", Field/binary, " ", BinaryVal/binary>>;

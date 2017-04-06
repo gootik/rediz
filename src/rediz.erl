@@ -45,8 +45,10 @@ keys(Pattern) ->
 
 %% Hash Commands
 -spec hdel(binary(), binary()) -> rediz_reply().
+hdel(Key, Fields) when is_list(Fields) ->
+    call_rediz({hdel, Key, Fields});
 hdel(Key, Field) ->
-    call_rediz({hdel, Key, Field}).
+    hdel(Key, [Field]).
 
 -spec hexists(binary(), binary()) -> rediz_reply().
 hexists(Key, Field) ->
@@ -69,7 +71,7 @@ hlen(Key) ->
     call_rediz({hlen, Key}).
 
 -spec hmget(binary(), binary()) -> rediz_reply().
-hmget(Key, Fields) ->
+hmget(Key, Fields) when is_list(Fields) ->
     call_rediz({hmget, Key, Fields}).
 
 -spec hmset(binary(), [{binary(), binary()}]) -> rediz_reply().
