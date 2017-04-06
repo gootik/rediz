@@ -40,8 +40,8 @@ To get familiar with Shackle by doing a simple/small project.
 {ok, <<"val2">>}
 
 7> rediz:hgetall(<<"rediz:hash">>).
-{ok,[{<<"val2">>, <<"field2">>},
-     {<<"val">>, <<"field">>}]}
+{ok,[{<<"field2">>, <<"val2">>},
+     {<<"field">>, <<"val">>}]}
 
 8> rediz:keys(<<"rediz:*">>).
 {ok, [<<"rediz:hash">>]}
