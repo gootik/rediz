@@ -52,9 +52,9 @@ resp_encode({hset, Key, Field, Value}) ->
     <<"HSET ", Key/binary, " ", Field/binary, " ", Value/binary>>;
 resp_encode({hsetnx, Key, Field, Value}) ->
     <<"HSETNX ", Key/binary, " ", Field/binary, " ", Value/binary>>;
-resp_encode({hmset, Key, Field, ValueProplist}) ->
+resp_encode({hmset, Key, ValueProplist}) ->
     ValuesBinary = argument_list(ValueProplist),
-    <<"HMSET ", Key/binary, " ", Field/binary, " ", ValuesBinary/binary>>;
+    <<"HMSET ", Key/binary, " ", ValuesBinary/binary>>;
 
 resp_encode({hkeys, Key}) ->
     <<"HKEYS ", Key/binary>>;
