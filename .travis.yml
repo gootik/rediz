@@ -5,13 +5,13 @@ addons:
     packages:
       - gcc-5
 
-env:
-  - CC=gcc-5
-
 cache:
   directories:
     - $HOME/.cache/rebar3
     - $TRAVIS_BUILD_DIR/_build
+
+env:
+  - CC=gcc-5
 
 install: true
 
@@ -23,6 +23,10 @@ otp_release:
   - 18.3
   - 17.5
 
+
 script: "./rebar3 eunit"
+
+services:
+  - redis-server
 
 sudo: false
