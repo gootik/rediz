@@ -1,5 +1,5 @@
 # Rediz
-**NOTE**: Not production ready, yet.
+**NOTE**: Somewhat production ready....
 
 [![Build Status](https://travis-ci.org/shezarkhani/rediz.svg?branch=master)](https://travis-ci.org/shezarkhani/rediz)
 
@@ -13,7 +13,6 @@ and [Shackle](https://github.com/lpgauth/shackle).
 * Rest of client commands
 * Faster decoding
 * Multi/Exec commands
-* Tests
 * Redis AUTH on connection
 * Run SELECT DB command on connection
 
