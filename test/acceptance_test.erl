@@ -9,6 +9,11 @@ rediz_hash_test_() ->
      fun(_) -> cleanup() end,
      hash_tests()}.
 
+rediz_hll_test_() ->
+    {foreach,
+     fun() -> rediz:start() end,
+     fun(_) -> cleanup() end,
+     hll_tests()}.
 
 hash_tests() ->
     [fun test_hlen/0,
@@ -23,6 +28,14 @@ hash_tests() ->
      fun test_hkeys/0,
      fun test_hvals/0].
 
+hll_tests() ->
+    [fun test_pfadd/0,
+     fun test_pfadd_list/0,
+     fun test_pfmerge/0,
+     fun test_pfcount/0,
+     fun test_pfcount_list/0].
+
+%% Hash Tests
 test_hlen() ->
     {ok, <<"OK">>} = rediz:query(<<"HMSET rediz:test:hash f1 v1 f2 v2 f3 v3">>),
     {ok, 3} = rediz:hlen(<<"rediz:test:hash">>).
@@ -85,6 +98,39 @@ test_hvals() ->
 test_hstrlen() ->
     {ok, 1} = rediz:query(<<"HSET rediz:test:hash f1 1234">>),
     {ok, 4} = rediz:hstrlen(<<"rediz:test:hash">>, <<"f1">>).
+
+
+%% HyperLogLog Tests
+test_pfadd() ->
+    {ok, 1} = rediz:pfadd(<<"rediz:test:hll">>, <<"id1">>),
+    {ok, 0} = rediz:pfadd(<<"rediz:test:hll">>, <<"id1">>).
+
+test_pfadd_list() ->
+    {ok, 1} = rediz:pfadd(<<"rediz:test:hll">>, [<<"id1">>, <<"id2">>]),
+    {ok, 0} = rediz:pfadd(<<"rediz:test:hll">>, [<<"id1">>, <<"id2">>]),
+    {ok, 1} = rediz:pfadd(<<"rediz:test:hll">>, [<<"id1">>, <<"id2">>, <<"id3">>]).
+
+test_pfmerge() ->
+    {ok, 1} = rediz:pfadd(<<"rediz:test:hll1">>, [<<"id1">>, <<"id2">>]),
+    {ok, 1} = rediz:pfadd(<<"rediz:test:hll2">>, [<<"id1">>, <<"id2">>, <<"id3">>]),
+    {ok, <<"OK">>} = rediz:pfmerge(<<"rediz:test:hll3">>, [<<"rediz:test:hll1">>, <<"rediz:test:hll2">>]),
+    {ok, 3} = rediz:pfcount(<<"rediz:test:hll3">>).
+
+test_pfcount() ->
+    {ok, 1} = rediz:pfadd(<<"rediz:test:hll">>, [<<"id1">>, <<"id2">>]),
+    {ok, 2} = rediz:pfcount(<<"rediz:test:hll">>),
+
+    {ok, 0} = rediz:pfadd(<<"rediz:test:hll">>, [<<"id1">>, <<"id2">>]),
+    {ok, 2} = rediz:pfcount(<<"rediz:test:hll">>),
+
+    {ok, 1} = rediz:pfadd(<<"rediz:test:hll">>, [<<"id1">>, <<"id3">>]),
+    {ok, 3} = rediz:pfcount(<<"rediz:test:hll">>).
+
+test_pfcount_list() ->
+    {ok, 1} = rediz:pfadd(<<"rediz:test:hll1">>, [<<"id1">>, <<"id2">>]),
+    {ok, 1} = rediz:pfadd(<<"rediz:test:hll2">>, [<<"id1">>, <<"id2">>, <<"id3">>]),
+    {ok, 3} = rediz:pfcount([<<"rediz:test:hll1">>, <<"rediz:test:hll2">>]).
+
 
 cleanup() ->
     rediz:query(<<"FLUSHDB">>),
