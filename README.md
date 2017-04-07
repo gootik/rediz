@@ -1,5 +1,5 @@
 # Rediz
-**NOTE**: Somewhat production ready....
+**NOTE**: Somewhat production ready.... (Some big features are not implemented, but if this subset satisfies your needs then it is wokring well...)
 
 [![Build Status](https://travis-ci.org/shezarkhani/rediz.svg?branch=master)](https://travis-ci.org/shezarkhani/rediz)
 
