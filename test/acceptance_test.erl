@@ -18,11 +18,10 @@ rediz_hll_test_() ->
 rediz_heavy_test_() ->
     {foreach,
      fun() -> rediz:start() end,
-     fun(_) -> ok end,
+     fun(_) -> cleanup() end,
      [fun test_hkeys_heavy/0]}.
 
 test_hkeys_heavy() ->
-    rediz:start(),
     lists:foreach(
         fun(_) ->
             RandomField = list_to_binary(random_string(8)),
@@ -30,9 +29,7 @@ test_hkeys_heavy() ->
         end, lists:seq(1, 10000)),
 
     {ok, Keys} = rediz:hkeys(<<"rediz:test:hash_keys">>),
-    10000 = length(Keys),
-
-    cleanup().
+    10000 = length(Keys).
 
 hash_tests() ->
     [fun test_hlen/0,
