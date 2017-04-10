@@ -15,8 +15,7 @@ init([]) ->
         binary,
         {buffer, 65535},
         {packet, raw},
-        {send_timeout, 50},
-        {send_timeout_close, true}
+        {reuseaddr, true}
     ],
 
     RedisOptions = [
@@ -24,8 +23,8 @@ init([]) ->
         {port, 6379},
         {socket_options, SocketOptions},
         {reconnect, true},
-        {reconnect_time_max, timer:minutes(2)},
-        {reconnect_time_min, timer:minutes(1)}
+        {reconnect_time_max, 0},
+        {reconnect_time_min, 0}
     ],
 
     PoolOptions = [

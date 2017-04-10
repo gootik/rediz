@@ -15,6 +15,22 @@ rediz_hll_test_() ->
      fun(_) -> cleanup() end,
      hll_tests()}.
 
+rediz_heavy_test_() ->
+    {foreach,
+     fun() -> rediz:start() end,
+     fun(_) -> cleanup() end,
+     [fun test_hkeys_heavy/0]}.
+
+test_hkeys_heavy() ->
+    lists:foreach(
+        fun(_) ->
+            RandomField = list_to_binary(random_string(8)),
+            {ok, 1} = rediz:hset(<<"rediz:test:hash_keys">>, RandomField, <<"1">>)
+        end, lists:seq(1, 10000)),
+
+    {ok, Keys} = rediz:hkeys(<<"rediz:test:hash_keys">>),
+    10000 = length(Keys).
+
 hash_tests() ->
     [fun test_hlen/0,
      fun test_hdel/0,
@@ -135,3 +151,13 @@ test_pfcount_list() ->
 cleanup() ->
     rediz:query(<<"FLUSHDB">>),
     rediz_app:stop(normal).
+
+
+random_string(N) ->
+    Alpha = "1234567890-=abcdefghijklmnopqrstuvwxyz,./;[",
+    L = length(Alpha),
+    lists:map(
+        fun(_) ->
+            I = granderl:uniform(L),
+            lists:nth(I, Alpha)
+        end, lists:seq(1, N)).
