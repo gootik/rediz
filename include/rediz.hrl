@@ -1,9 +1,9 @@
 %% Redis Protocol
--define(RESP_TYPE_STRING, "+").
--define(RESP_TYPE_ERROR, "-").
--define(RESP_TYPE_INTEGER, ":").
--define(RESP_TYPE_BULK_STRING, "$").
--define(RESP_TYPE_ARRAY, "*").
+-define(RESP_TYPE_STRING, $+).
+-define(RESP_TYPE_ERROR, $-).
+-define(RESP_TYPE_INTEGER, $:).
+-define(RESP_TYPE_BULK_STRING, $$).
+-define(RESP_TYPE_ARRAY, $*).
 
 -define(RESP_DELIM, "\r\n").
 -define(RESP_LF_INT, $\n).
