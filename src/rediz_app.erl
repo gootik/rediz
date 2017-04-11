@@ -14,8 +14,7 @@ start(_, _) ->
     rediz_sup:start_link().
 
 stop() ->
-    ok = application:stop(rediz),
-    ok = application:stop(shackle).
+    ok = application:stop(rediz).
 
 stop(_) ->
     ok.

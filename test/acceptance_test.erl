@@ -157,7 +157,8 @@ setup() ->
 
 cleanup() ->
     rediz:query(<<"FLUSHDB">>, rediz_test_pool),
-    ok = rediz_app:stop().
+    ok = rediz_app:stop(),
+    ok = application:stop(shackle).
 
 random_string(N) ->
     Alpha = "1234567890-=abcdefghijklmnopqrstuvwxyz,./;[",
