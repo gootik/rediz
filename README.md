@@ -8,13 +8,9 @@ A lot of this library's design was inspired and driven by the design/code in [An
 and [Shackle](https://github.com/lpgauth/shackle).
 
 ## TODO
-* Configuration for startup
-* Being able to run multiple redis connection pools
 * Rest of client commands
 * Faster decoding
 * Multi/Exec commands
-* Redis AUTH on connection
-* Run SELECT DB command on connection
 
 ## Why
 To get familiar with Shackle by doing a simple/small project.
