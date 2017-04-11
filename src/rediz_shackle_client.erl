@@ -11,7 +11,7 @@
 
 -export([
     init/0,
-    setup/2,
+    setup/3,
     handle_request/2,
     handle_data/2,
     terminate/1
@@ -24,11 +24,21 @@
     requests_out = 1    :: pos_integer()
 }).
 
+-define(SETUP_TIMEOUT, 1000).
+
 init() ->
     {ok, #state{}}.
 
-setup(_Socket, State) ->
-    {ok, State}.
+setup(Socket, State, SetupOptions) ->
+    {auth, Auth} = lists:keyfind(auth, 1, SetupOptions),
+    {db, Db} = lists:keyfind(db, 1, SetupOptions),
+
+    case auth(Socket, State, Auth) of
+        {ok, State} ->
+            select_db(Socket, State, Db);
+        {error, Reason, State} ->
+            {error, Reason, State}
+    end.
 
 handle_request(Request, #state{requests_out = Requests} = State) ->
     ReqData = rediz_protocol:encode(Request),
@@ -51,3 +61,28 @@ handle_data(Data, #state{requests_in = Requests, buffer = Buffer} = State) ->
 
 terminate(_State) ->
     ok.
+
+select_db(_Socket, State, 0) ->
+    {ok, State};
+select_db(Socket, State, Db) ->
+    DbBinary = integer_to_binary(Db),
+    setup_command(Socket, State, <<"SELECT ", DbBinary/binary, "\r\n">>).
+
+auth(_Socket, State, no_auth) ->
+    {ok, State};
+auth(Socket, State, Auth) ->
+    setup_command(Socket, State, <<"AUTH ", Auth/binary, "\r\n">>).
+
+setup_command(Socket, State, Command) ->
+    case gen_tcp:send(Socket, Command) of
+        ok ->
+            case gen_tcp:recv(Socket, 0, ?SETUP_TIMEOUT) of
+                {ok, <<"+OK\r\n">>} ->
+                    {ok, State};
+                {error, Reason} ->
+                    {error, Reason, State}
+            end;
+
+        {error, Reason} ->
+            {error, Reason, State}
+    end.

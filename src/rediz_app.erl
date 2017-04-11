@@ -4,7 +4,7 @@
 
 -export([
     start/0, start/2,
-    stop/1
+    stop/0, stop/1
 ]).
 
 start() ->
@@ -12,6 +12,9 @@ start() ->
 
 start(_, _) ->
     rediz_sup:start_link().
+
+stop() ->
+    ok = application:stop(rediz).
 
 stop(_) ->
     ok.

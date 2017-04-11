@@ -24,7 +24,7 @@ otp_release:
   - 17.5
 
 
-script: "./rebar3 eunit"
+script: "./rebar3 eunit -v"
 
 services:
   - redis-server

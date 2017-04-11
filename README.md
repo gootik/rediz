@@ -8,41 +8,37 @@ A lot of this library's design was inspired and driven by the design/code in [An
 and [Shackle](https://github.com/lpgauth/shackle).
 
 ## TODO
-* Configuration for startup
-* Being able to run multiple redis connection pools
 * Rest of client commands
 * Faster decoding
 * Multi/Exec commands
-* Redis AUTH on connection
-* Run SELECT DB command on connection
 
 ## Why
 To get familiar with Shackle by doing a simple/small project.
 
 ## Example
 ```
-1> rediz:start().
-{ok, [granderl, shackle, rediz]}
+1> rediz:start(rediz_local_pool, #{ip => "127.0.0.1", port => 6379, auth => no_auth, db => 0}).
+ok
 
-2> rediz:hset(<<"rediz:hash">>, <<"field">>, <<"val">>).
+2> rediz:hset(<<"rediz:hash">>, <<"field">>, <<"val">>, rediz_local_pool).
 {ok, 1}
 
-3> rediz:hset(<<"rediz:hash">>, <<"field2">>, <<"val2">>).
+3> rediz:hset(<<"rediz:hash">>, <<"field2">>, <<"val2">>, rediz_local_pool).
 {ok, 1}
 
-4> rediz:hkeys(<<"redis:hash">>).
+4> rediz:hkeys(<<"redis:hash">>, rediz_local_pool).
 {ok, []}
 
-5> rediz:hkeys(<<"rediz:hash">>).
+5> rediz:hkeys(<<"rediz:hash">>, rediz_local_pool).
 {ok, [<<"field2">>, <<"field">>]}
 
-6> rediz:hget(<<"rediz:hash">>, <<"field2">>).
+6> rediz:hget(<<"rediz:hash">>, <<"field2">>, rediz_local_pool).
 {ok, <<"val2">>}
 
-7> rediz:hgetall(<<"rediz:hash">>).
+7> rediz:hgetall(<<"rediz:hash">>, rediz_local_pool).
 {ok,[{<<"field2">>, <<"val2">>},
      {<<"field">>, <<"val">>}]}
 
-8> rediz:keys(<<"rediz:*">>).
+8> rediz:keys(<<"rediz:*">>, rediz_local_pool).
 {ok, [<<"rediz:hash">>]}
 ```
