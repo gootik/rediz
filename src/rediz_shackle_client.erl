@@ -11,7 +11,7 @@
 
 -export([
     init/0,
-    setup/2,
+    setup/3,
     handle_request/2,
     handle_data/2,
     terminate/1
@@ -27,7 +27,7 @@
 init() ->
     {ok, #state{}}.
 
-setup(_Socket, State) ->
+setup(_Socket, State, _SetupOptions) ->
     {ok, State}.
 
 handle_request(Request, #state{requests_out = Requests} = State) ->
