@@ -3,132 +3,133 @@
 -include("rediz.hrl").
 
 -export([
-    start/0,
+    start/2,
 
     %% Key Commands
-    set/2, get/1, keys/1, del/1,
+    set/3, get/2, keys/2, del/2,
 
     %% Hash Commands
-    hlen/1, hdel/2, hexists/2,
-    hget/2, hgetall/1, hmget/2,
-    hincrby/3, hincrbyfloat/3,
-    hset/3, hsetnx/3, hmset/2,
-    hkeys/1, hvals/1, hstrlen/2,
+    hlen/2, hdel/3, hexists/3,
+    hget/3, hgetall/2, hmget/3,
+    hincrby/4, hincrbyfloat/4,
+    hset/4, hsetnx/4, hmset/3,
+    hkeys/2, hvals/2, hstrlen/3,
 
     %% HyperLogLog Commands
-    pfadd/2, pfcount/1, pfmerge/2,
+    pfadd/3, pfcount/2, pfmerge/3,
 
     %% Query
-    query/1
+    query/2
 ]).
 
--spec start() -> {ok, [atom()]} | {error, term()}.
-start() ->
-    rediz_app:start().
+-spec start(atom, map()) -> {ok, [atom()]} | {error, term()}.
+start(Name, Options) ->
+    rediz_app:start(),
+    rediz_sup:start_pool(Name, Options).
 
 %% Key Commands
--spec set(binary(), binary()) -> rediz_reply().
-set(Key, Value) ->
-    call_rediz({set, Key, Value}).
+-spec set(binary(), binary(), atom()) -> rediz_reply().
+set(Key, Value, Pool) ->
+    call_rediz({set, Key, Value}, Pool).
 
--spec get(binary()) -> rediz_reply().
-get(Key) ->
-    call_rediz({get, Key}).
+-spec get(binary(), atom()) -> rediz_reply().
+get(Key, Pool) ->
+    call_rediz({get, Key}, Pool).
 
--spec del(binary()) -> rediz_reply().
-del(Key) ->
-    call_rediz({del, Key}).
+-spec del(binary(), atom()) -> rediz_reply().
+del(Key, Pool) ->
+    call_rediz({del, Key}, Pool).
 
--spec keys(binary()) -> rediz_reply().
-keys(Pattern) ->
-    call_rediz({keys, Pattern}).
+-spec keys(binary(), atom()) -> rediz_reply().
+keys(Pattern, Pool) ->
+    call_rediz({keys, Pattern}, Pool).
 
 %% Hash Commands
--spec hdel(binary(), binary()) -> rediz_reply().
-hdel(Key, Fields) when is_list(Fields) ->
-    call_rediz({hdel, Key, Fields});
-hdel(Key, Field) ->
-    hdel(Key, [Field]).
+-spec hdel(binary(), binary(), atom()) -> rediz_reply().
+hdel(Key, Fields, Pool) when is_list(Fields) ->
+    call_rediz({hdel, Key, Fields}, Pool);
+hdel(Key, Field, Pool) ->
+    hdel(Key, [Field], Pool).
 
--spec hexists(binary(), binary()) -> rediz_reply().
-hexists(Key, Field) ->
-    call_rediz({hexists, Key, Field}).
+-spec hexists(binary(), binary(), atom()) -> rediz_reply().
+hexists(Key, Field, Pool) ->
+    call_rediz({hexists, Key, Field}, Pool).
 
--spec hincrby(binary(), binary(), integer()) -> rediz_reply().
-hincrby(Key, Field, Val) when is_integer(Val) ->
-    call_rediz({hincrby, Key, Field, Val}).
+-spec hincrby(binary(), binary(), integer(), atom()) -> rediz_reply().
+hincrby(Key, Field, Val, Pool) when is_integer(Val) ->
+    call_rediz({hincrby, Key, Field, Val}, Pool).
 
--spec hincrbyfloat(binary(), binary(), float()) -> rediz_reply().
-hincrbyfloat(Key, Field, Val) when is_float(Val) ->
-    call_rediz({hincrbyfloat, Key, Field, Val}).
+-spec hincrbyfloat(binary(), binary(), float(), atom()) -> rediz_reply().
+hincrbyfloat(Key, Field, Val, Pool) when is_float(Val) ->
+    call_rediz({hincrbyfloat, Key, Field, Val}, Pool).
 
--spec hkeys(binary()) -> rediz_reply().
-hkeys(Key) ->
-    call_rediz({hkeys, Key}).
+-spec hkeys(binary(), atom()) -> rediz_reply().
+hkeys(Key, Pool) ->
+    call_rediz({hkeys, Key}, Pool).
 
--spec hlen(binary()) -> rediz_reply().
-hlen(Key) ->
-    call_rediz({hlen, Key}).
+-spec hlen(binary(), atom()) -> rediz_reply().
+hlen(Key, Pool) ->
+    call_rediz({hlen, Key}, Pool).
 
--spec hmget(binary(), binary()) -> rediz_reply().
-hmget(Key, Fields) when is_list(Fields) ->
-    call_rediz({hmget, Key, Fields}).
+-spec hmget(binary(), binary(), atom()) -> rediz_reply().
+hmget(Key, Fields, Pool) when is_list(Fields) ->
+    call_rediz({hmget, Key, Fields}, Pool).
 
--spec hmset(binary(), [{binary(), binary()}]) -> rediz_reply().
-hmset(Key, FieldValues) when is_list(FieldValues) ->
-    call_rediz({hmset, Key, FieldValues}).
+-spec hmset(binary(), [{binary(), binary()}], atom()) -> rediz_reply().
+hmset(Key, FieldValues, Pool) when is_list(FieldValues) ->
+    call_rediz({hmset, Key, FieldValues}, Pool).
 
--spec hget(binary(), binary()) -> rediz_reply().
-hget(Key, Field) ->
-    call_rediz({hget, Key, Field}).
+-spec hget(binary(), binary(), atom()) -> rediz_reply().
+hget(Key, Field, Pool) ->
+    call_rediz({hget, Key, Field}, Pool).
 
--spec hset(binary(), binary(), binary()) -> rediz_reply().
-hset(Key, Field, Value) ->
-    call_rediz({hset, Key, Field, Value}).
+-spec hset(binary(), binary(), binary(), atom()) -> rediz_reply().
+hset(Key, Field, Value, Pool) ->
+    call_rediz({hset, Key, Field, Value}, Pool).
 
--spec hsetnx(binary(), binary(), binary()) -> rediz_reply().
-hsetnx(Key, Field, Value) ->
-    call_rediz({hsetnx, Key, Field, Value}).
+-spec hsetnx(binary(), binary(), binary(), atom()) -> rediz_reply().
+hsetnx(Key, Field, Value, Pool) ->
+    call_rediz({hsetnx, Key, Field, Value}, Pool).
 
--spec hstrlen(binary(), binary()) -> rediz_reply().
-hstrlen(Key, Field) ->
-    call_rediz({hstrlen, Key, Field}).
+-spec hstrlen(binary(), binary(), atom()) -> rediz_reply().
+hstrlen(Key, Field, Pool) ->
+    call_rediz({hstrlen, Key, Field}, Pool).
 
--spec hgetall(binary()) -> {ok, [tuple()]}.
-hgetall(Key) ->
-    {ok, ValList} = call_rediz({hgetall, Key}),
+-spec hgetall(binary(), atom()) -> {ok, [tuple()]}.
+hgetall(Key, Pool) ->
+    {ok, ValList} = call_rediz({hgetall, Key}, Pool),
 
     {ok, redis_array_to_proplist(ValList)}.
 
--spec hvals(binary()) -> rediz_reply().
-hvals(Key) ->
-    call_rediz({hvals, Key}).
+-spec hvals(binary(), atom()) -> rediz_reply().
+hvals(Key, Pool) ->
+    call_rediz({hvals, Key}, Pool).
 
 %% HyperLogLog Commands
--spec pfadd(binary(), binary() | [binary()]) -> rediz_reply().
-pfadd(Key, Values) when is_list(Values) ->
-    call_rediz({pfadd, Key, Values});
-pfadd(Key, Value) ->
-    pfadd(Key, [Value]).
+-spec pfadd(binary(), binary() | [binary()], atom()) -> rediz_reply().
+pfadd(Key, Values, Pool) when is_list(Values) ->
+    call_rediz({pfadd, Key, Values}, Pool);
+pfadd(Key, Value, Pool) ->
+    pfadd(Key, [Value], Pool).
 
--spec pfcount(binary() | [binary()]) -> rediz_reply().
-pfcount(Keys) when is_list(Keys) ->
-    call_rediz({pfcount, Keys});
-pfcount(Key) ->
-    pfcount([Key]).
+-spec pfcount(binary() | [binary()], atom()) -> rediz_reply().
+pfcount(Keys, Pool) when is_list(Keys) ->
+    call_rediz({pfcount, Keys}, Pool);
+pfcount(Key, Pool) ->
+    pfcount([Key], Pool).
 
--spec pfmerge(binary(), binary() | [binary()]) -> rediz_reply().
-pfmerge(DestKey, SourceKeys) when is_list(SourceKeys) ->
-    call_rediz({pfmerge, DestKey, SourceKeys});
-pfmerge(DestKey, SourceKey) ->
-    pfmerge(DestKey, [SourceKey]).
+-spec pfmerge(binary(), binary() | [binary()], atom()) -> rediz_reply().
+pfmerge(DestKey, SourceKeys, Pool) when is_list(SourceKeys) ->
+    call_rediz({pfmerge, DestKey, SourceKeys}, Pool);
+pfmerge(DestKey, SourceKey, Pool) ->
+    pfmerge(DestKey, [SourceKey], Pool).
 
--spec query(binary()) -> rediz_reply().
-query(Query) when is_binary(Query) ->
-    call_rediz({raw_query, Query}).
+-spec query(binary(), atom()) -> rediz_reply().
+query(Query, Pool) when is_binary(Query) ->
+    call_rediz({raw_query, Query}, Pool).
 
-call_rediz(Query) ->
-    shackle:call(rediz, Query).
+call_rediz(Query, Pool) ->
+    shackle:call(Pool, Query).
 
 redis_array_to_proplist([]) ->
     [];
