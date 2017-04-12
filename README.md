@@ -15,9 +15,17 @@ and [Shackle](https://github.com/lpgauth/shackle).
 ## Why
 To get familiar with Shackle by doing a simple/small project.
 
+## Warning
+Right now tests use the locally setup redis server, this could be very
+dangerous to your environment as they flush DBs. 
+
 ## Example
 ```
-1> rediz:start(rediz_local_pool, #{ip => "127.0.0.1", port => 6379, auth => no_auth, db => 0}).
+1> rediz:start(rediz_local_pool, #{ip => "127.0.0.1", 
+                                   port => 6379, 
+                                   auth => no_auth, 
+                                   db => 0,
+                                   pool_size => 16}).
 ok
 
 2> rediz:hset(<<"rediz:hash">>, <<"field">>, <<"val">>, rediz_local_pool).

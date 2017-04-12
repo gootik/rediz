@@ -21,15 +21,22 @@ rediz_heavy_test_() ->
      fun(_) -> cleanup() end,
      [fun test_hkeys_heavy/0]}.
 
-test_hkeys_heavy() ->
-    lists:foreach(
-        fun(_) ->
-            RandomField = list_to_binary(random_string(8)),
-            {ok, 1} = rediz:hset(<<"rediz:test:hash_keys">>, RandomField, <<"1">>, rediz_test_pool)
-        end, lists:seq(1, 10000)),
+rediz_init_test() ->
+    rediz:start(rediz_test_init_pool, #{
+        ip => "127.0.0.1",
+        port => 6379,
+        db => 5,
+        auth => no_auth,
+        pool_size => 1
+    }),
 
-    {ok, Keys} = rediz:hkeys(<<"rediz:test:hash_keys">>, rediz_test_pool),
-    10000 = length(Keys).
+    {ok, <<"OK">>} = rediz:set(<<"rediz:init_test">>, <<"db_5">>, rediz_test_init_pool),
+    {ok, <<"db_5">>} = rediz:get(<<"rediz:init_test">>, rediz_test_init_pool),
+
+    {ok, <<"OK">>} = rediz:query(<<"SELECT 1">>, rediz_test_init_pool),
+    {ok, undefined} = rediz:get(<<"rediz:init_test">>, rediz_test_init_pool),
+
+    cleanup().
 
 hash_tests() ->
     [fun test_hlen/0,
@@ -147,6 +154,17 @@ test_pfcount_list() ->
     {ok, 1} = rediz:pfadd(<<"rediz:test:hll2">>, [<<"id1">>, <<"id2">>, <<"id3">>], rediz_test_pool),
     {ok, 3} = rediz:pfcount([<<"rediz:test:hll1">>, <<"rediz:test:hll2">>], rediz_test_pool).
 
+
+test_hkeys_heavy() ->
+    lists:foreach(
+        fun(_) ->
+            RandomField = list_to_binary(random_string(8)),
+            {ok, 1} = rediz:hset(<<"rediz:test:hash_keys">>, RandomField, <<"1">>, rediz_test_pool)
+        end, lists:seq(1, 10000)),
+
+    {ok, Keys} = rediz:hkeys(<<"rediz:test:hash_keys">>, rediz_test_pool),
+    10000 = length(Keys).
+
 setup() ->
     rediz:start(rediz_test_pool, #{
         ip => "127.0.0.1",
@@ -156,7 +174,7 @@ setup() ->
     }).
 
 cleanup() ->
-    rediz:query(<<"FLUSHDB">>, rediz_test_pool),
+    rediz:query(<<"FLUSHALL">>, rediz_test_pool),
     ok = rediz_app:stop(),
     ok = application:stop(shackle).
 
