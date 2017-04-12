@@ -10,29 +10,30 @@
 -behavior(shackle_client).
 
 -export([
-    init/0,
-    setup/3,
+    init/1,
+    setup/2,
     handle_request/2,
     handle_data/2,
     terminate/1
 ]).
 
 -record(state, {
-    buffer       = <<>> :: binary,
+    auth         = no_auth  :: no_auth | binary(),
+    db           = 0        :: 0 | pos_integer(),
+    buffer       = <<>>     :: binary(),
 
-    requests_in  = 1    :: pos_integer(),
-    requests_out = 1    :: pos_integer()
+    requests_in  = 1        :: pos_integer(),
+    requests_out = 1        :: pos_integer()
 }).
 
 -define(SETUP_TIMEOUT, 1000).
 
-init() ->
-    {ok, #state{}}.
+init(#{auth := Auth, db := Db}) ->
+    {ok, #state{
+        auth = Auth,
+        db = Db}}.
 
-setup(Socket, State, SetupOptions) ->
-    {auth, Auth} = lists:keyfind(auth, 1, SetupOptions),
-    {db, Db} = lists:keyfind(db, 1, SetupOptions),
-
+setup(Socket, #state{auth = Auth, db = Db} = State) ->
     case auth(Socket, State, Auth) of
         {ok, State} ->
             select_db(Socket, State, Db);
@@ -80,9 +81,11 @@ setup_command(Socket, State, Command) ->
                 {ok, <<"+OK\r\n">>} ->
                     {ok, State};
                 {error, Reason} ->
+                    io:format(user, "oops ~p~n", [Reason]),
                     {error, Reason, State}
             end;
 
         {error, Reason} ->
+            io:format(user, "oops ~p~n", [Reason]),
             {error, Reason, State}
     end.

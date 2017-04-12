@@ -10,6 +10,8 @@
 
 -define(RESP_NULL, "-1").
 
+-define(DEFAULT_POOL_SIZE, 16).
+
 %% External Types
 -type rediz_reply() :: {ok, reply()} | {error, binary()}.
 -type reply() :: reply_types() | [reply_types()].

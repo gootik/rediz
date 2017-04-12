@@ -3,7 +3,7 @@
  {<<"metal">>,{pkg,<<"metal">>,<<"0.1.0">>},1},
  {<<"shackle">>,
   {git,"https://github.com/shezarkhani/shackle",
-       {ref,"b87cacfc85a2b6bd30c2f791cdeca39fdd132c11"}},
+       {ref,"e3ddaf6950b187d20977718e441d27935f8c5a59"}},
   0}]}.
 [
 {pkg_hash,[

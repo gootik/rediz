@@ -2,6 +2,8 @@
 
 -behaviour(supervisor).
 
+-include("rediz.hrl").
+
 -export([
     start_link/0,
     start_pool/2,
@@ -13,8 +15,8 @@ start_link() ->
 
 start_pool(Name, #{ip := Ip,
                    port := Port,
-                   db := Db,
-                   auth := Auth}) ->
+                   db := _Db,
+                   auth := _Auth} = Options) ->
 
     SocketOptions = [
         binary,
@@ -27,18 +29,16 @@ start_pool(Name, #{ip := Ip,
         {ip, Ip},
         {port, Port},
         {socket_options, SocketOptions},
-        {setup_options, [
-            {db, Db},
-            {auth, Auth}
-        ]},
+        {init_options, Options},
         {reconnect, true},
         {reconnect_time_max, 0},
         {reconnect_time_min, 0}
     ],
 
+    PoolSize = maps:get(pool_size, Options, ?DEFAULT_POOL_SIZE),
     PoolOptions = [
         {backlog_size, 1024},
-        {pool_size, 16}
+        {pool_size, PoolSize}
     ],
 
     ok = shackle_pool:start(Name, rediz_shackle_client, RedisOptions, PoolOptions).
