@@ -81,11 +81,9 @@ setup_command(Socket, State, Command) ->
                 {ok, <<"+OK\r\n">>} ->
                     {ok, State};
                 {error, Reason} ->
-                    io:format(user, "oops ~p~n", [Reason]),
                     {error, Reason, State}
             end;
 
         {error, Reason} ->
-            io:format(user, "oops ~p~n", [Reason]),
             {error, Reason, State}
     end.
