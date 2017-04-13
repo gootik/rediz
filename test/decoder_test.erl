@@ -23,3 +23,8 @@ decode_bulk_string_test() ->
     {{ok, <<"a">>}, <<>>} = rediz_decoder:resp_decode(<<"$1\r\na\r\n">>),
     {buffer, <<"$10\r\n123456\r\n">>} = rediz_decoder:resp_decode(<<"$10\r\n123456\r\n">>),
     {{ok, undefined}, <<"+ExtraStuff">>} = rediz_decoder:resp_decode(<<"$-1\r\n+ExtraStuff">>).
+
+decode_array_test() ->
+    {{ok, [2, <<"b">>, <<"a">>]}, <<>>} = rediz_decoder:resp_decode(<<"*3\r\n+a\r\n+b\r\n:2\r\n">>),
+    {buffer, <<"*5\r\n+a\r\n+b\r\n:2\r\n">>} = rediz_decoder:resp_decode(<<"*5\r\n+a\r\n+b\r\n:2\r\n">>),
+    {{ok, [2, <<"b">>, <<"a">>]}, <<"+ExtraStuff">>} = rediz_decoder:resp_decode(<<"*3\r\n+a\r\n+b\r\n:2\r\n+ExtraStuff">>).
