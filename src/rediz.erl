@@ -34,7 +34,7 @@
     query/2
 ]).
 
--spec start(atom, map()) -> {ok, [atom()]} | {error, term()}.
+-spec start(atom, map()) -> {ok, atom()}.
 start(Name, Options) ->
     rediz_app:start(),
     ok = rediz_sup:start_pool(Name, Options),
@@ -59,7 +59,7 @@ keys(Pattern, Pool) ->
     call_rediz({keys, Pattern}, Pool).
 
 %% Hash Commands
--spec hdel(binary(), binary(), atom()) -> rediz_reply().
+-spec hdel(binary(), binary() | [binary()], atom()) -> rediz_reply().
 hdel(Key, Fields, Pool) when is_list(Fields) ->
     call_rediz({hdel, Key, Fields}, Pool);
 hdel(Key, Field, Pool) ->
@@ -85,7 +85,7 @@ hkeys(Key, Pool) ->
 hlen(Key, Pool) ->
     call_rediz({hlen, Key}, Pool).
 
--spec hmget(binary(), binary(), atom()) -> rediz_reply().
+-spec hmget(binary(), [binary()], atom()) -> rediz_reply().
 hmget(Key, Fields, Pool) when is_list(Fields) ->
     call_rediz({hmget, Key, Fields}, Pool).
 
@@ -140,63 +140,81 @@ pfmerge(DestKey, SourceKey, Pool) ->
 
 
 %% Sets
+-spec sadd(binary(), binary() | [binary()], atom()) -> rediz_reply().
 sadd(Key, Members, Pool) when is_list(Members) ->
     call_rediz({sadd, Key, Members}, Pool);
 sadd(Key, Member, Pool) ->
     sadd(Key, [Member], Pool).
 
+-spec scard(binary(), atom()) -> rediz_reply().
 scard(Key, Pool) ->
     call_rediz({scard, Key}, Pool).
 
+-spec sdiff([binary()], atom()) -> rediz_reply().
 sdiff(Keys, Pool) when is_list(Keys) ->
     call_rediz({sdiff, Keys}, Pool);
 sdiff(Key, Pool) ->
     sdiff([Key], Pool).
 
+-spec sdiffstore(binary(), [binary()], atom()) -> rediz_reply().
 sdiffstore(Destination, Keys, Pool) when is_list(Keys) ->
     call_rediz({sdiffstore, Destination, Keys}, Pool);
 sdiffstore(Destination, Key, Pool) ->
     sdiffstore(Destination, [Key], Pool).
 
+-spec sinter(binary() | [binary()], atom()) -> rediz_reply().
 sinter(Keys, Pool) when is_list(Keys) ->
     call_rediz({sinter, Keys}, Pool);
 sinter(Key, Pool) ->
     sinter([Key], Pool).
 
+-spec sinterstore(binary(), binary() | [binary()], atom()) -> rediz_reply().
 sinterstore(Destination, Keys, Pool) when is_list(Keys) ->
     call_rediz({sinterstore, Destination, Keys}, Pool);
 sinterstore(Destination, Key, Pool) ->
     sinterstore(Destination, [Key], Pool).
 
+-spec sismember(binary(), binary(), atom()) -> rediz_reply().
 sismember(Key, Member, Pool) ->
     call_rediz({sismember, Key, Member}, Pool).
 
+-spec smembers(binary(), atom()) -> rediz_reply().
 smembers(Key, Pool) ->
     call_rediz({smembers, Key}, Pool).
 
+-spec smove(binary(), binary(), binary(), atom()) -> rediz_reply().
 smove(Source, Destination, Member, Pool) ->
     call_rediz({smove, Source, Destination, Member}, Pool).
 
+-spec spop(binary(), non_neg_integer(), atom()) -> rediz_reply().
 spop(Key, Count, Pool) ->
     call_rediz({spop, Key, Count}, Pool).
+
+-spec spop(binary(), atom()) -> rediz_reply().
 spop(Key, Pool) ->
     spop(Key, 1, Pool).
 
+-spec srandmember(binary(), non_neg_integer(), atom()) -> rediz_reply().
 srandmember(Key, Count, Pool) ->
     call_rediz({srandmember, Key, Count}, Pool).
+
+-spec srandmember(binary(), atom()) -> rediz_reply().
 srandmember(Key, Pool) ->
     spop(Key, 1, Pool).
 
+-spec srem(binary(), binary() | [binary()], atom()) -> rediz_reply().
 srem(Key, Members, Pool) when is_list(Members) ->
     call_rediz({srem, Key, Members}, Pool);
 srem(Key, Member, Pool) ->
     sinterstore(Key, [Member], Pool).
 
+-spec sunion(binary() | [binary()], atom()) -> rediz_reply().
 sunion(Keys, Pool) when is_list(Keys) ->
     call_rediz({sunion, Keys}, Pool);
 sunion(Key, Pool) ->
     sinter([Key], Pool).
 
+-spec sunionstore(binary(), binary() | [binary()], atom()) -> rediz_reply().
 sunionstore(Destination, Keys, Pool) when is_list(Keys) ->
     call_rediz({sunionstore, Destination, Keys}, Pool);
 sunionstore(Destination, Key, Pool) ->

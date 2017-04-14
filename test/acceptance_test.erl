@@ -9,6 +9,12 @@ rediz_hash_test_() ->
      fun(_) -> cleanup() end,
      hash_tests()}.
 
+rediz_set_test_() ->
+    {foreach,
+     fun() -> setup() end,
+     fun(_) -> cleanup() end,
+     set_tests()}.
+
 rediz_hll_test_() ->
     {foreach,
      fun() -> setup() end,
@@ -57,6 +63,22 @@ hll_tests() ->
      fun test_pfmerge/0,
      fun test_pfcount/0,
      fun test_pfcount_list/0].
+
+set_tests() ->
+    [fun test_sadd/0,
+     fun test_scard/0,
+     fun test_sdiff/0,
+     fun test_sdiffstore/0,
+     fun test_sinter/0,
+     fun test_sinterstore/0,
+     fun test_sismember/0,
+     fun test_smembers/0,
+     fun test_smove/0,
+     fun test_spop/0,
+     fun test_srandmember/0,
+     fun test_srem/0,
+     fun test_sunion/0,
+     fun test_sunionstore/0].
 
 %% Hash Tests
 test_hlen() ->
@@ -121,6 +143,38 @@ test_hvals() ->
 test_hstrlen() ->
     {ok, 1} = rediz:query(<<"HSET rediz:test:hash f1 1234">>, rediz_test_pool),
     {ok, 4} = rediz:hstrlen(<<"rediz:test:hash">>, <<"f1">>, rediz_test_pool).
+
+
+test_sadd() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
+    {ok, [<<"sadd_test">>]} = rediz:smembers(<<"rediz:test:set">>, rediz_test_pool).
+
+test_scard() ->
+    ok.
+test_sdiff() ->
+    ok.
+test_sdiffstore() ->
+    ok.
+test_sinter() ->
+    ok.
+test_sinterstore() ->
+    ok.
+test_sismember() ->
+    ok.
+test_smembers() ->
+    ok.
+test_smove() ->
+    ok.
+test_spop() ->
+    ok.
+test_srandmember() ->
+    ok.
+test_srem() ->
+    ok.
+test_sunion() ->
+    ok.
+test_sunionstore() ->
+    ok.
 
 
 %% HyperLogLog Tests
