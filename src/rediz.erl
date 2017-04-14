@@ -37,7 +37,9 @@
 -spec start(atom, map()) -> {ok, [atom()]} | {error, term()}.
 start(Name, Options) ->
     rediz_app:start(),
-    rediz_sup:start_pool(Name, Options).
+    ok = rediz_sup:start_pool(Name, Options),
+
+    {ok, Name}.
 
 %% Key Commands
 -spec set(binary(), binary(), atom()) -> rediz_reply().
