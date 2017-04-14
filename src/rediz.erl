@@ -21,7 +21,7 @@
     %% Sets
     sadd/3, scard/2,
     sdiff/2, sdiff/3, sdiffstore/3, sdiffstore/4,
-    sinter/2, sinterstore/3,
+    sinter/2, sinter/3, sinterstore/3, sinterstore/4,
     sismember/3, smembers/2,
     smove/4, spop/2, spop/3,
     srandmember/2, srandmember/3,
@@ -166,17 +166,21 @@ sdiffstore(Destination, Key, Keys, Pool) when is_list(Keys) ->
 sdiffstore(Destination, Key, Pool) ->
     sdiffstore(Destination, Key, [], Pool).
 
--spec sinter(binary() | [binary()], atom()) -> rediz_reply().
-sinter(Keys, Pool) when is_list(Keys) ->
-    call_rediz({sinter, Keys}, Pool);
-sinter(Key, Pool) ->
-    sinter([Key], Pool).
+-spec sinter(binary(), [binary()], atom()) -> rediz_reply().
+sinter(Key, Keys, Pool) when is_list(Keys) ->
+    call_rediz({sinter, Key, Keys}, Pool).
 
--spec sinterstore(binary(), binary() | [binary()], atom()) -> rediz_reply().
-sinterstore(Destination, Keys, Pool) when is_list(Keys) ->
-    call_rediz({sinterstore, Destination, Keys}, Pool);
+-spec sinter(binary(), atom()) -> rediz_reply().
+sinter(Key, Pool) ->
+    sinter(Key, [], Pool).
+
+-spec sinterstore(binary(), binary(), [binary()], atom()) -> rediz_reply().
+sinterstore(Destination, Key, Keys, Pool) when is_list(Keys) ->
+    call_rediz({sinterstore, Destination, Key, Keys}, Pool).
+
+-spec sinterstore(binary(), binary(), atom()) -> rediz_reply().
 sinterstore(Destination, Key, Pool) ->
-    sinterstore(Destination, [Key], Pool).
+    sinterstore(Destination, Key, [], Pool).
 
 -spec sismember(binary(), binary(), atom()) -> rediz_reply().
 sismember(Key, Member, Pool) ->

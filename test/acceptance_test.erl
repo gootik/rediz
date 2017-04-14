@@ -144,7 +144,6 @@ test_hstrlen() ->
     {ok, 1} = rediz:query(<<"HSET rediz:test:hash f1 1234">>, rediz_test_pool),
     {ok, 4} = rediz:hstrlen(<<"rediz:test:hash">>, <<"f1">>, rediz_test_pool).
 
-
 test_sadd() ->
     {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
     {ok, 0} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
@@ -185,11 +184,33 @@ test_sdiffstore() ->
     {ok, 2} = rediz:sdiffstore(<<"rediz:test:set_store">>, <<"rediz:test:set">>, [<<"rediz:test:set2">>, <<"rediz:test:set3">>], rediz_test_pool).
 
 test_sinter() ->
-    ok.
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"c">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"d">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"e">>, rediz_test_pool),
+
+    {ok, [<<"c">>]} = rediz:sinter(<<"rediz:test:set">>, [<<"rediz:test:set2">>], rediz_test_pool).
+
 test_sinterstore() ->
-    ok.
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"c">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"d">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"e">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sinterstore(<<"rediz:test:set_store">>, <<"rediz:test:set">>, [<<"rediz:test:set2">>], rediz_test_pool).
+
 test_sismember() ->
-    ok.
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sismember(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
+    {ok, 0} = rediz:sismember(<<"rediz:test:set">>, <<"no_member">>, rediz_test_pool).
+
 test_smembers() ->
     ok.
 test_smove() ->

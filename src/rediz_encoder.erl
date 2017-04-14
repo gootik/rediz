@@ -85,12 +85,12 @@ resp_encode({sdiff, Key, Keys}) ->
 resp_encode({sdiffstore, Destination, Key, Keys}) ->
     KeysBinary = argument_list(Keys),
     <<"SDIFFSTORE ", Destination/binary, " ", Key/binary, " ", KeysBinary/binary>>;
-resp_encode({sinter, Keys}) ->
+resp_encode({sinter, Key, Keys}) ->
     KeysBinary = argument_list(Keys),
-    <<"SINTER ", KeysBinary/binary>>;
-resp_encode({sinterstore, Destination, Keys}) ->
+    <<"SINTER ", Key/binary, " ", KeysBinary/binary>>;
+resp_encode({sinterstore, Destination, Key, Keys}) ->
     KeysBinary = argument_list(Keys),
-    <<"SINTERSTORE ", Destination/binary, " ", KeysBinary/binary>>;
+    <<"SINTERSTORE ", Destination/binary, " ", Key/binary, " ", KeysBinary/binary>>;
 resp_encode({sismember, Key, Member}) ->
     <<"SISMEMBER ", Key/binary, " ", Member/binary>>;
 resp_encode({smembers, Key}) ->
