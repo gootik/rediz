@@ -18,6 +18,18 @@
     %% HyperLogLog Commands
     pfadd/3, pfcount/2, pfmerge/3,
 
+    %% Sets
+    sadd/3, scard/2,
+    sdiff/2, sdiffstore/3,
+    sinter/2, sinterstore/3,
+    sismember/3, smembers/2,
+    smove/4, spop/2, spop/3,
+    srandmember/2, srandmember/3,
+    srem/3, sunion/2, sunionstore/3,
+
+    %% Scans
+    %% sscan, hscan, scan
+
     %% Query
     query/2
 ]).
@@ -123,6 +135,70 @@ pfmerge(DestKey, SourceKeys, Pool) when is_list(SourceKeys) ->
     call_rediz({pfmerge, DestKey, SourceKeys}, Pool);
 pfmerge(DestKey, SourceKey, Pool) ->
     pfmerge(DestKey, [SourceKey], Pool).
+
+
+%% Sets
+sadd(Key, Members, Pool) when is_list(Members) ->
+    call_rediz({sadd, Key, Members}, Pool);
+sadd(Key, Member, Pool) ->
+    sadd(Key, [Member], Pool).
+
+scard(Key, Pool) ->
+    call_rediz({scard, Key}, Pool).
+
+sdiff(Keys, Pool) when is_list(Keys) ->
+    call_rediz({sdiff, Keys}, Pool);
+sdiff(Key, Pool) ->
+    sdiff([Key], Pool).
+
+sdiffstore(Destination, Keys, Pool) when is_list(Keys) ->
+    call_rediz({sdiffstore, Destination, Keys}, Pool);
+sdiffstore(Destination, Key, Pool) ->
+    sdiffstore(Destination, [Key], Pool).
+
+sinter(Keys, Pool) when is_list(Keys) ->
+    call_rediz({sinter, Keys}, Pool);
+sinter(Key, Pool) ->
+    sinter([Key], Pool).
+
+sinterstore(Destination, Keys, Pool) when is_list(Keys) ->
+    call_rediz({sinterstore, Destination, Keys}, Pool);
+sinterstore(Destination, Key, Pool) ->
+    sinterstore(Destination, [Key], Pool).
+
+sismember(Key, Member, Pool) ->
+    call_rediz({sismember, Key, Member}, Pool).
+
+smembers(Key, Pool) ->
+    call_rediz({smembers, Key}, Pool).
+
+smove(Source, Destination, Member, Pool) ->
+    call_rediz({smove, Source, Destination, Member}, Pool).
+
+spop(Key, Count, Pool) ->
+    call_rediz({spop, Key, Count}, Pool).
+spop(Key, Pool) ->
+    spop(Key, 1, Pool).
+
+srandmember(Key, Count, Pool) ->
+    call_rediz({srandmember, Key, Count}, Pool).
+srandmember(Key, Pool) ->
+    spop(Key, 1, Pool).
+
+srem(Key, Members, Pool) when is_list(Members) ->
+    call_rediz({srem, Key, Members}, Pool);
+srem(Key, Member, Pool) ->
+    sinterstore(Key, [Member], Pool).
+
+sunion(Keys, Pool) when is_list(Keys) ->
+    call_rediz({sunion, Keys}, Pool);
+sunion(Key, Pool) ->
+    sinter([Key], Pool).
+
+sunionstore(Destination, Keys, Pool) when is_list(Keys) ->
+    call_rediz({sunionstore, Destination, Keys}, Pool);
+sunionstore(Destination, Key, Pool) ->
+    sinterstore(Destination, [Key], Pool).
 
 -spec query(binary(), atom()) -> rediz_reply().
 query(Query, Pool) when is_binary(Query) ->
