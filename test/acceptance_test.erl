@@ -147,14 +147,43 @@ test_hstrlen() ->
 
 test_sadd() ->
     {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
+    {ok, 0} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
+
     {ok, [<<"sadd_test">>]} = rediz:smembers(<<"rediz:test:set">>, rediz_test_pool).
 
 test_scard() ->
-    ok.
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test2">>, rediz_test_pool),
+    {ok, 2} = rediz:scard(<<"rediz:test:set">>, rediz_test_pool).
+
 test_sdiff() ->
-    ok.
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"d">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"c">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"e">>, rediz_test_pool),
+
+    {ok, [<<"d">>, <<"b">>]} = rediz:sdiff(<<"rediz:test:set">>, [<<"rediz:test:set2">>, <<"rediz:test:set3">>], rediz_test_pool).
+
 test_sdiffstore() ->
-    ok.
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"d">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"c">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"e">>, rediz_test_pool),
+
+    {ok, 2} = rediz:sdiffstore(<<"rediz:test:set_store">>, <<"rediz:test:set">>, [<<"rediz:test:set2">>, <<"rediz:test:set3">>], rediz_test_pool).
+
 test_sinter() ->
     ok.
 test_sinterstore() ->

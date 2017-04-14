@@ -78,13 +78,13 @@ resp_encode({sadd, Key, Members}) ->
     MembersBinary = argument_list(Members),
     <<"SADD ", Key/binary, " ", MembersBinary/binary>>;
 resp_encode({scard, Key}) ->
-    <<"SCAR ", Key/binary>>;
-resp_encode({sdiff, Keys}) ->
+    <<"SCARD ", Key/binary>>;
+resp_encode({sdiff, Key, Keys}) ->
     KeysBinary = argument_list(Keys),
-    <<"SDIFF ", KeysBinary/binary>>;
-resp_encode({sdiffstore, Destination, Keys}) ->
+    <<"SDIFF ", Key/binary, " ", KeysBinary/binary>>;
+resp_encode({sdiffstore, Destination, Key, Keys}) ->
     KeysBinary = argument_list(Keys),
-    <<"SDIFFSTORE ", Destination/binary, " ", KeysBinary/binary>>;
+    <<"SDIFFSTORE ", Destination/binary, " ", Key/binary, " ", KeysBinary/binary>>;
 resp_encode({sinter, Keys}) ->
     KeysBinary = argument_list(Keys),
     <<"SINTER ", KeysBinary/binary>>;

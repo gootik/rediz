@@ -20,7 +20,7 @@
 
     %% Sets
     sadd/3, scard/2,
-    sdiff/2, sdiffstore/3,
+    sdiff/2, sdiff/3, sdiffstore/3, sdiffstore/4,
     sinter/2, sinterstore/3,
     sismember/3, smembers/2,
     smove/4, spop/2, spop/3,
@@ -150,17 +150,21 @@ sadd(Key, Member, Pool) ->
 scard(Key, Pool) ->
     call_rediz({scard, Key}, Pool).
 
--spec sdiff([binary()], atom()) -> rediz_reply().
-sdiff(Keys, Pool) when is_list(Keys) ->
-    call_rediz({sdiff, Keys}, Pool);
-sdiff(Key, Pool) ->
-    sdiff([Key], Pool).
+-spec sdiff(binary(), [binary()], atom()) -> rediz_reply().
+sdiff(Key, Keys, Pool) when is_list(Keys) ->
+    call_rediz({sdiff, Key, Keys}, Pool).
 
--spec sdiffstore(binary(), [binary()], atom()) -> rediz_reply().
-sdiffstore(Destination, Keys, Pool) when is_list(Keys) ->
-    call_rediz({sdiffstore, Destination, Keys}, Pool);
+-spec sdiff(binary(), atom()) -> rediz_reply().
+sdiff(Key, Pool) ->
+    sdiff(Key, [], Pool).
+
+-spec sdiffstore(binary(), binary(), [binary()], atom()) -> rediz_reply().
+sdiffstore(Destination, Key, Keys, Pool) when is_list(Keys) ->
+    call_rediz({sdiffstore, Destination, Key, Keys}, Pool).
+
+-spec sdiffstore(binary(), binary(), atom()) -> rediz_reply().
 sdiffstore(Destination, Key, Pool) ->
-    sdiffstore(Destination, [Key], Pool).
+    sdiffstore(Destination, Key, [], Pool).
 
 -spec sinter(binary() | [binary()], atom()) -> rediz_reply().
 sinter(Keys, Pool) when is_list(Keys) ->
