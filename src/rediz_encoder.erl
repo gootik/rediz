@@ -96,10 +96,14 @@ resp_encode({sismember, Key, Member}) ->
 resp_encode({smembers, Key}) ->
     <<"SMEMBERS ", Key/binary>>;
 resp_encode({smove, Source, Destination, Member}) ->
-    <<"SMOVE ", Source/binary, " ", Destination/binary, Member/binary>>;
-resp_encode({spop, Key, Count}) ->
+    <<"SMOVE ", Source/binary, " ", Destination/binary, " ", Member/binary>>;
+
+resp_encode({spop, Key, Count}) when Count =:= 1 ->
+    <<"SPOP ", Key/binary>>;
+resp_encode({spop, Key, Count}) when Count > 1 ->
     CountBinary = integer_to_binary(Count),
     <<"SPOP ", Key/binary, " ", CountBinary/binary>>;
+
 resp_encode({srandmember, Key, Count}) ->
     CountBinary = integer_to_binary(Count),
     <<"SRANDMEMBER ", Key/binary, " ", CountBinary/binary>>;
