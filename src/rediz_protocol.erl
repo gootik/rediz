@@ -10,7 +10,6 @@
 -compile(inline).
 -compile({inline_size, 512}).
 
-
 -export([
     encode/1,
     decode/1

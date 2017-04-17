@@ -240,7 +240,7 @@ test_spop() ->
 test_srandmember() ->
     {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
 
-    {ok, <<"b">>} = rediz:srandmember(<<"rediz:test:set">>, rediz_test_pool).
+    {ok, [<<"b">>]} = rediz:srandmember(<<"rediz:test:set">>, rediz_test_pool).
 
 test_srem() ->
     {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
