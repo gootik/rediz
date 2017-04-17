@@ -41,7 +41,7 @@ start_pool(Name, #{ip := Ip,
         {pool_size, PoolSize}
     ],
 
-    ok = shackle_pool:start(Name, rediz_shackle_client, RedisOptions, PoolOptions).
+    shackle_pool:start(Name, rediz_shackle_client, RedisOptions, PoolOptions).
 
 init([]) ->
     {ok, {{one_for_one, 5, 10}, []}}.

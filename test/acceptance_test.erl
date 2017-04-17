@@ -9,6 +9,12 @@ rediz_hash_test_() ->
      fun(_) -> cleanup() end,
      hash_tests()}.
 
+rediz_set_test_() ->
+    {foreach,
+     fun() -> setup() end,
+     fun(_) -> cleanup() end,
+     set_tests()}.
+
 rediz_hll_test_() ->
     {foreach,
      fun() -> setup() end,
@@ -22,7 +28,7 @@ rediz_heavy_test_() ->
      [fun test_hkeys_heavy/0]}.
 
 rediz_init_test() ->
-    rediz:start(rediz_test_init_pool, #{
+    rediz:start(rediz_test_pool, #{
         ip => "127.0.0.1",
         port => 6379,
         db => 5,
@@ -30,11 +36,11 @@ rediz_init_test() ->
         pool_size => 1
     }),
 
-    {ok, <<"OK">>} = rediz:set(<<"rediz:init_test">>, <<"db_5">>, rediz_test_init_pool),
-    {ok, <<"db_5">>} = rediz:get(<<"rediz:init_test">>, rediz_test_init_pool),
+    {ok, <<"OK">>} = rediz:set(<<"rediz:init_test">>, <<"db_5">>, rediz_test_pool),
+    {ok, <<"db_5">>} = rediz:get(<<"rediz:init_test">>, rediz_test_pool),
 
-    {ok, <<"OK">>} = rediz:query(<<"SELECT 1">>, rediz_test_init_pool),
-    {ok, undefined} = rediz:get(<<"rediz:init_test">>, rediz_test_init_pool),
+    {ok, <<"OK">>} = rediz:query(<<"SELECT 1">>, rediz_test_pool),
+    {ok, undefined} = rediz:get(<<"rediz:init_test">>, rediz_test_pool),
 
     cleanup().
 
@@ -57,6 +63,22 @@ hll_tests() ->
      fun test_pfmerge/0,
      fun test_pfcount/0,
      fun test_pfcount_list/0].
+
+set_tests() ->
+    [fun test_sadd/0,
+     fun test_scard/0,
+     fun test_sdiff/0,
+     fun test_sdiffstore/0,
+     fun test_sinter/0,
+     fun test_sinterstore/0,
+     fun test_sismember/0,
+     fun test_smembers/0,
+     fun test_smove/0,
+     fun test_spop/0,
+     fun test_srandmember/0,
+     fun test_srem/0,
+     fun test_sunion/0,
+     fun test_sunionstore/0].
 
 %% Hash Tests
 test_hlen() ->
@@ -122,6 +144,147 @@ test_hstrlen() ->
     {ok, 1} = rediz:query(<<"HSET rediz:test:hash f1 1234">>, rediz_test_pool),
     {ok, 4} = rediz:hstrlen(<<"rediz:test:hash">>, <<"f1">>, rediz_test_pool).
 
+test_sadd() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
+    {ok, 0} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
+
+    {ok, [<<"sadd_test">>]} = rediz:smembers(<<"rediz:test:set">>, rediz_test_pool).
+
+test_scard() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test2">>, rediz_test_pool),
+    {ok, 2} = rediz:scard(<<"rediz:test:set">>, rediz_test_pool).
+
+test_sdiff() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"d">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"c">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"e">>, rediz_test_pool),
+
+    {ok, R1} = rediz:sdiff(<<"rediz:test:set">>, [<<"rediz:test:set2">>, <<"rediz:test:set3">>], rediz_test_pool),
+    [<<"b">>, <<"d">>] = lists:sort(R1).
+
+test_sdiffstore() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"d">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"c">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"e">>, rediz_test_pool),
+
+    {ok, 2} = rediz:sdiffstore(<<"rediz:test:set_store">>, <<"rediz:test:set">>, [<<"rediz:test:set2">>, <<"rediz:test:set3">>], rediz_test_pool).
+
+test_sinter() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"c">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"d">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"e">>, rediz_test_pool),
+
+    {ok, [<<"c">>]} = rediz:sinter(<<"rediz:test:set">>, [<<"rediz:test:set2">>], rediz_test_pool).
+
+test_sinterstore() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"c">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"d">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"e">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sinterstore(<<"rediz:test:set_store">>, <<"rediz:test:set">>, [<<"rediz:test:set2">>], rediz_test_pool).
+
+test_sismember() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sismember(<<"rediz:test:set">>, <<"sadd_test">>, rediz_test_pool),
+    {ok, 0} = rediz:sismember(<<"rediz:test:set">>, <<"no_member">>, rediz_test_pool).
+
+test_smembers() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+
+    {ok, R1} = rediz:smembers(<<"rediz:test:set">>, rediz_test_pool),
+    [<<"a">>, <<"b">>] = lists:sort(R1).
+
+test_smove() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"b">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"c">>, rediz_test_pool),
+
+    {ok, 1} = rediz:smove(<<"rediz:test:set2">>, <<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+
+    {ok, R1} = rediz:smembers(<<"rediz:test:set">>, rediz_test_pool),
+    {ok, [<<"c">>]} = rediz:smembers(<<"rediz:test:set2">>, rediz_test_pool),
+
+    [<<"a">>, <<"b">>] = lists:sort(R1).
+
+test_spop() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+
+    {ok, <<"a">>} = rediz:spop(<<"rediz:test:set">>, rediz_test_pool).
+
+test_srandmember() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+
+    {ok, <<"b">>} = rediz:srandmember(<<"rediz:test:set">>, rediz_test_pool).
+
+test_srem() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+
+    {ok, 1} = rediz:srem(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+    {ok, 0} = rediz:srem(<<"rediz:test:set">>, <<"b">>, rediz_test_pool).
+
+test_sunion() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"c">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"d">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"e">>, rediz_test_pool),
+
+    Expected = lists:sort([<<"d">>,
+                           <<"a">>,
+                           <<"b">>,
+                           <<"e">>,
+                           <<"c">>]),
+    {ok, Result} = rediz:sunion([<<"rediz:test:set">>, <<"rediz:test:set2">>], rediz_test_pool),
+
+    Expected = lists:sort(Result).
+
+
+test_sunionstore() ->
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"c">>, rediz_test_pool),
+
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"c">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"d">>, rediz_test_pool),
+    {ok, 1} = rediz:sadd(<<"rediz:test:set2">>, <<"e">>, rediz_test_pool),
+
+    Expected = lists:sort([<<"d">>,
+                           <<"a">>,
+                           <<"b">>,
+                           <<"e">>,
+                           <<"c">>]),
+    {ok, 5} = rediz:sunionstore(<<"rediz:test:store">>, [<<"rediz:test:set">>, <<"rediz:test:set2">>], rediz_test_pool),
+    {ok, Result} = rediz:smembers(<<"rediz:test:store">>, rediz_test_pool),
+
+    Expected = lists:sort(Result).
 
 %% HyperLogLog Tests
 test_pfadd() ->
@@ -169,14 +332,13 @@ setup() ->
     rediz:start(rediz_test_pool, #{
         ip => "127.0.0.1",
         port => 6379,
-        db => 0,
+        db => 1,
         auth => no_auth
     }).
 
 cleanup() ->
     rediz:query(<<"FLUSHALL">>, rediz_test_pool),
-    ok = rediz_app:stop(),
-    ok = application:stop(shackle).
+    ok = shackle_pool:stop(rediz_test_pool).
 
 random_string(N) ->
     Alpha = "1234567890-=abcdefghijklmnopqrstuvwxyz,./;[",

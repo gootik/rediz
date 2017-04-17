@@ -74,6 +74,49 @@ resp_encode({pfmerge, DestKey, SourceKeys}) ->
     SourceKeysBinary = argument_list(SourceKeys),
     <<"PFMERGE ", DestKey/binary, SourceKeysBinary/binary>>;
 
+resp_encode({sadd, Key, Members}) ->
+    MembersBinary = argument_list(Members),
+    <<"SADD ", Key/binary, " ", MembersBinary/binary>>;
+resp_encode({scard, Key}) ->
+    <<"SCARD ", Key/binary>>;
+resp_encode({sdiff, Key, Keys}) ->
+    KeysBinary = argument_list(Keys),
+    <<"SDIFF ", Key/binary, " ", KeysBinary/binary>>;
+resp_encode({sdiffstore, Destination, Key, Keys}) ->
+    KeysBinary = argument_list(Keys),
+    <<"SDIFFSTORE ", Destination/binary, " ", Key/binary, " ", KeysBinary/binary>>;
+resp_encode({sinter, Key, Keys}) ->
+    KeysBinary = argument_list(Keys),
+    <<"SINTER ", Key/binary, " ", KeysBinary/binary>>;
+resp_encode({sinterstore, Destination, Key, Keys}) ->
+    KeysBinary = argument_list(Keys),
+    <<"SINTERSTORE ", Destination/binary, " ", Key/binary, " ", KeysBinary/binary>>;
+resp_encode({sismember, Key, Member}) ->
+    <<"SISMEMBER ", Key/binary, " ", Member/binary>>;
+resp_encode({smembers, Key}) ->
+    <<"SMEMBERS ", Key/binary>>;
+resp_encode({smove, Source, Destination, Member}) ->
+    <<"SMOVE ", Source/binary, " ", Destination/binary, " ", Member/binary>>;
+
+resp_encode({spop, Key, Count}) when Count =:= 1 ->
+    <<"SPOP ", Key/binary>>;
+resp_encode({spop, Key, Count}) when Count > 1 ->
+    CountBinary = integer_to_binary(Count),
+    <<"SPOP ", Key/binary, " ", CountBinary/binary>>;
+
+resp_encode({srandmember, Key, Count}) ->
+    CountBinary = integer_to_binary(Count),
+    <<"SRANDMEMBER ", Key/binary, " ", CountBinary/binary>>;
+resp_encode({srem, Key, Members}) ->
+    MembersBinary = argument_list(Members),
+    <<"SREM ", Key/binary, " ", MembersBinary/binary>>;
+resp_encode({sunion, Keys}) ->
+    KeysBinary = argument_list(Keys),
+    <<"SUNION ", KeysBinary/binary>>;
+resp_encode({sunionstore, Destination, Keys}) ->
+    KeysBinary = argument_list(Keys),
+    <<"SUNIONSTORE ", Destination/binary, " ", KeysBinary/binary>>;
+
 resp_encode({raw_query, Query}) ->
     Query.
 
