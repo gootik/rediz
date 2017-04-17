@@ -167,7 +167,8 @@ test_sdiff() ->
     {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"c">>, rediz_test_pool),
     {ok, 1} = rediz:sadd(<<"rediz:test:set3">>, <<"e">>, rediz_test_pool),
 
-    {ok, [<<"d">>, <<"b">>]} = rediz:sdiff(<<"rediz:test:set">>, [<<"rediz:test:set2">>, <<"rediz:test:set3">>], rediz_test_pool).
+    {ok, R1} = rediz:sdiff(<<"rediz:test:set">>, [<<"rediz:test:set2">>, <<"rediz:test:set3">>], rediz_test_pool),
+    [<<"b">>, <<"d">>] = lists:sort(R1).
 
 test_sdiffstore() ->
     {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
@@ -215,7 +216,8 @@ test_smembers() ->
     {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
     {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"b">>, rediz_test_pool),
 
-    {ok, [<<"a">>, <<"b">>]} = rediz:smembers(<<"rediz:test:set">>, rediz_test_pool).
+    {ok, R1} = rediz:smembers(<<"rediz:test:set">>, rediz_test_pool),
+    [<<"a">>, <<"b">>] = lists:sort(R1).
 
 test_smove() ->
     {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
@@ -225,8 +227,10 @@ test_smove() ->
 
     {ok, 1} = rediz:smove(<<"rediz:test:set2">>, <<"rediz:test:set">>, <<"b">>, rediz_test_pool),
 
-    {ok, [<<"a">>, <<"b">>]} = rediz:smembers(<<"rediz:test:set">>, rediz_test_pool),
-    {ok, [<<"c">>]} = rediz:smembers(<<"rediz:test:set2">>, rediz_test_pool).
+    {ok, R1} = rediz:smembers(<<"rediz:test:set">>, rediz_test_pool),
+    {ok, [<<"c">>]} = rediz:smembers(<<"rediz:test:set2">>, rediz_test_pool),
+
+    [<<"a">>, <<"b">>] = lists:sort(R1).
 
 test_spop() ->
     {ok, 1} = rediz:sadd(<<"rediz:test:set">>, <<"a">>, rediz_test_pool),
