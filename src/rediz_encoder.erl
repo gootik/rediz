@@ -10,11 +10,11 @@
 
 -include("rediz.hrl").
 
+-compile(inline).
+
 -export([
     resp_encode/1
 ]).
-
--compile(inline).
 
 -spec resp_encode(rediz_command()) -> binary().
 %% Key Commands

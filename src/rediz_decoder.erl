@@ -10,11 +10,11 @@
 
 -include("rediz.hrl").
 
+-compile(inline).
+
 -export([
     resp_decode/1
 ]).
-
--compile(inline).
 
 -spec resp_decode(binary()) -> {rediz_reply(), binary()} | {buffer, binary()}.
 %% Error reply

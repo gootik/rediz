@@ -208,7 +208,7 @@ srandmember(Key, Count, Pool) ->
 
 -spec srandmember(binary(), atom()) -> rediz_reply().
 srandmember(Key, Pool) ->
-    spop(Key, 1, Pool).
+    srandmember(Key, 1, Pool).
 
 -spec srem(binary(), binary() | [binary()], atom()) -> rediz_reply().
 srem(Key, Members, Pool) when is_list(Members) ->
@@ -220,7 +220,7 @@ srem(Key, Member, Pool) ->
 sunion(Keys, Pool) when is_list(Keys) ->
     call_rediz({sunion, Keys}, Pool);
 sunion(Key, Pool) ->
-    sinter([Key], Pool).
+    sunion([Key], Pool).
 
 -spec sunionstore(binary(), binary() | [binary()], atom()) -> rediz_reply().
 sunionstore(Destination, Keys, Pool) when is_list(Keys) ->
