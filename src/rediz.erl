@@ -220,7 +220,7 @@ srem(Key, Member, Pool) ->
 sunion(Keys, Pool) when is_list(Keys) ->
     call_rediz({sunion, Keys}, Pool);
 sunion(Key, Pool) ->
-    sinter([Key], Pool).
+    sunion([Key], Pool).
 
 -spec sunionstore(binary(), binary() | [binary()], atom()) -> rediz_reply().
 sunionstore(Destination, Keys, Pool) when is_list(Keys) ->
