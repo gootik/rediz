@@ -20,7 +20,7 @@ Right now tests use the locally setup redis server, this could be very
 dangerous to your environment as they flush DBs. 
 
 ## Example
-```
+```erlang
 1> rediz:start(rediz_local_pool, #{ip => "127.0.0.1", 
                                    port => 6379, 
                                    auth => no_auth, 
