@@ -208,7 +208,7 @@ srandmember(Key, Count, Pool) ->
 
 -spec srandmember(binary(), atom()) -> rediz_reply().
 srandmember(Key, Pool) ->
-    spop(Key, 1, Pool).
+    srandmember(Key, 1, Pool).
 
 -spec srem(binary(), binary() | [binary()], atom()) -> rediz_reply().
 srem(Key, Members, Pool) when is_list(Members) ->
